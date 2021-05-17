@@ -123,15 +123,11 @@ class DnaC:
                 "X-Auth-Token":self.Token
                 }
         url = f"{self.baseURL}{DnaC.DeviceListURL}"
-        if hostname:
-            url = f"{url}?hostname={hostname}"
-        else:
-            if platformId:
-                url = f"{url}?platformId={platformId}"
-            else:
-                if managementIpAddress:
-                    url = f"{url}?managementIpAddress={managementIpAddress}"
-        response = requests.get(url,headers=headers,verify=self.SSLverify)
+        params = {}
+        if hostname: params['hostname'] = hostname
+        if platformId: params['platformId'] = platformId
+        if managementIpAddress: params['managementIpAddress'] = managementIpAddress
+        response = requests.get(url,headers=headers,params=params,verify=self.SSLverify)
         return response.json()["response"]
 
     def pathtrace(self,srcIP,dstIP):
@@ -245,5 +241,7 @@ if __name__ == '__main__':
     print(f"{'Only Host MAC:c8:4c:75:68:b2:c0':15}"'\n'f"{json.dumps(dna.hostlist(hostMac='c8:4c:75:68:b2:c0'),indent=2)}")
     print(f"{'Only Host to cat_9k_2.abc.inc':15}"'\n'f"{json.dumps(dna.hostlist(connectedNetworkDeviceName='cat_9k_2.abc.inc'),indent=2)}")
     print(f"{'Full Device list:':15}"'\n'f"{json.dumps(dna.devicelist(),indent=2)}")
+    print(f"{'Only Hostname asr1001-x.abc.inc:':15}"'\n'f"{json.dumps(dna.devicelist(hostname='asr1001-x.abc.inc'),indent=2)}")
+    print(f"{'Only Hostname asr1001-x.abc.inc AND Platform ID ASR1001-X :':15}"'\n'f"{json.dumps(dna.devicelist(hostname='asr1001-x.abc.inc',platformId='ASR1001-X'),indent=2)}")
     dna.pathtrace("10.10.22.98","8.8.8.8")
 
